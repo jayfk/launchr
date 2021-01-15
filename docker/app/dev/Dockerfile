@@ -11,8 +11,14 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
+# copy the entrypoint script
+COPY ./docker/app/shared/entrypoint.sh /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
+
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install -r /requirements/dev.txt
 
 WORKDIR /app
+ENTRYPOINT ["/entrypoint"]
