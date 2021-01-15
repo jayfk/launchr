@@ -1,0 +1,97 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Support{% endblock %}
+
+{% block content %}
+  <div class="hero bg-gradient">
+    <div class="container content">
+      <div class="row">
+        <div class="col-lg-6 offset-3 text-center">
+          <h1>Support</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-8 offset-2">
+          <p class="lead pb-5">To contact support, please use the contact form below. <br/>We try to get back to you as
+            soon
+            as possible.</p>
+          {% if success %}
+            <div class="alert-success alert">
+              <strong>Message sent successfully</strong><br/>
+              We'll get back to you as soon as possible.
+            </div>
+          {% endif %}
+          <form method="POST" action="{% url "support" %}">
+            {% if form.non_field_errors %}
+              <div class="pb-4">
+                <div class="text-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    <div class="">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+            {% csrf_token %}
+
+            <div class="row">
+
+              <div class="col-sm-12 col-md-6">
+                {# Email #}
+                <div class="pb-3">
+                  <label>Email</label>
+                  <input name='email' type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" placeholder=""
+                         value="{% if form.email.value %}{{ form.email.value }}{% endif %}"
+                         id="{{ form.email.id_for_label }}">
+                  {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.email.errors %}
+                        {{ error|escape }}<br/>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                {# Subject #}
+                <div class="pb-3">
+                  <label>Subject</label>
+                  <input name='subject' type="subject" class="form-control {% if form.subject.errors %}is-invalid{% endif %}" placeholder=""
+                         value="{% if form.subject.value %}{{ form.subject.value }}{% endif %}"
+                         id="{{ form.subject.id_for_label }}">
+                  {% if form.subject.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.subject.errors %}
+                        {{ error|escape }}<br/>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+              {# Message #}
+              <div class="col-sm-12 pb-3">
+                <label>Message</label>
+                {% spaceless %}
+                  <textarea name="message" class="form-control {% if form.message.errors %}is-invalid{% endif %}" rows="8">{{ form.message.value }}</textarea>
+                {% endspaceless %}
+                {% if form.message.errors %}
+                  <div class="invalid-feedback">
+                    {% for error in form.message.errors %}
+                      {{ error|escape }}<br/>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="pb-3">
+              {{ form.captcha }}
+            </div>
+            <input type="submit" class="btn btn-dark" value="Send">
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </section>
+{% endblock %}

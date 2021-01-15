@@ -1,0 +1,31 @@
+{% extends "account/base.html" %}
+
+{% load account i18n %}
+
+{% block title %}Email{% endblock %}
+
+{% block login %}
+
+  <h3 class="title text-white">Change Email</h3>
+
+  {% if user.emailaddress_set.all.count >= 2 or not can_add_email %}
+    <p class="text-success lead">
+      Success
+    </p>
+    <p>
+      Please check your mail account now to confirm your new address.<br/>
+      Contact support if you encounter problems.
+    </p>
+  {% else %}
+    <form method="post" action="{% url 'account_email' %}" class="add_email">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+    </form>
+  {% endif %}
+
+  <p class="text-center mt-3 is-small">
+    <a href="{% url "account_signup" %}" class="link-light text-decoration-none">Sign Up</a> &nbsp;·&nbsp;
+    <a href="{% url 'account_reset_password' %}" class="link-light text-decoration-none">Forgot Password</a>
+  </p>
+{% endblock %}

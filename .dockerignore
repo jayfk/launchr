@@ -1,0 +1,4 @@
+.git/
+.cache/
+.pytest_cache/
+.tox/

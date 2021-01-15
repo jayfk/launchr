@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+    <div class="container">
+      <a class="navbar-brand" href="{% url "home" %}">
+        <img height="24px" src="{% static "images/logo_white.png" %}"/>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 px-5">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "home" %}#pricing">Pricing</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="btn btn-dark" href="{% url "users:dashboard" %}">Dashboard</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url "account_login" %}">Login &nbsp;</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-success" href="{% url "account_signup" %}">Sign Up</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  {% block content %}{% endblock %}
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <img height="28px" src="{% static "images/logo_white.png" %}"/>
+        </div>
+        <div class="col-md-6 pt-2">
+          <a href="{% url "support" %}" class="text-white text-decoration-none float-end">Support</a>
+        </div>
+        <div class="mt-4 mx-3">
+          <hr/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 text-center copy">
+          &copy; 2020 getlaunchr.com
+          <a href="{% url "tos" %}" class="text-white-50">Terms of Service</a> &nbsp;·&nbsp;
+          <a href="{% url "privacy" %}" class="text-white-50">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endblock %}

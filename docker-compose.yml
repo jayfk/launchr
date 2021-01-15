@@ -1,0 +1,27 @@
+version: '3'
+
+volumes:
+  database: { }
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/dev/Dockerfile
+    depends_on:
+      - postgres
+    volumes:
+      - ./app:/app:z
+    env_file:
+      - ./.envs/.dev/.app
+      - ./.envs/.dev/.postgres
+    ports:
+      - "8000:8000"
+    command: "python manage.py runserver 0.0.0.0:8000"
+
+  postgres:
+    image: "postgres:13.1"
+    volumes:
+      - database:/var/lib/postgresql/data:Z
+    env_file:
+      - ./.envs/.dev/.postgres

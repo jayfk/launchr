@@ -1,0 +1,74 @@
+{% extends "account/base.html" %}
+
+{% load account %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block login %}
+
+  <h3 class="title text-white pb-3">Sign Up</h3>
+  <form method="POST" action="{% url 'account_signup' %}">
+    <div class="row">
+      <div class="col-md-6 offset-3 col-sm-12">
+        {% if form.non_field_errors %}
+          <div class="pb-4">
+            <div class="text-danger" role="alert">
+              {% for error in form.non_field_errors %}
+                <div class="">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+
+        {# Email #}
+        <div class="pb-2">
+          <input name='email' type="email" class="form-control form-control-lg {% if form.email.errors %}is-invalid{% endif %}" placeholder="Email"
+                 value="{% if form.email.value %}{{ form.email.value }}{% endif %}" id="{{ form.email.id_for_label }}">
+          {% if form.email.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+                {{ error|escape }}<br/>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        {# Password #}
+        <div class="pb-2">
+          <input name='password1' type="password" class="form-control form-control-lg {% if form.password1.errors %}is-invalid{% endif %}" placeholder="Password">
+          {% if form.password1.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.password1.errors %}
+                {{ error|escape }}<br/>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        {# Password again #}
+        <div class="pb-2">
+          <input name='password2' type="password" class="form-control form-control-lg {% if form.password2.errors %}is-invalid{% endif %}" placeholder="Password (again)">
+          {% if form.password2.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.password2.errors %}
+                {{ error|escape }}<br/>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="pt-3 d-grid gap-2">
+          <button class="btn btn-dark btn-lg" type="submit">Sign Up</button>
+        </div>
+        <p class="text-center mt-3 is-small">
+          <a href="{% url "account_login" %}" class="link-light text-decoration-none">Login</a> &nbsp;·&nbsp;
+          <a href="{% url 'account_reset_password' %}" class="link-light text-decoration-none">Forgot Password</a>
+        </p>
+      </div>
+    </div>
+  </form>
+{% endblock %}

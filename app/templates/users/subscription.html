@@ -1,0 +1,28 @@
+{% extends "users/base.html" %}
+
+{% block title %}Subscription{% endblock %}
+
+{% block content %}
+  <h2 class="pt-3 pb-3">Subscription</h2>
+  {% if user.has_active_subscription %}
+    <form method="post" action="{% url "users:billing" %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-dark">Manage Subscription</button>
+    </form>
+    <p class="pt-3">We are partnering with Stripe for secure subscription management.<br/>
+    </p>
+  {% elif user.is_trialling %}
+    <p>You are currently on the <strong>{{ user.plan.name }}</strong> Trial, which expires
+      in {{ user.trial_ends_at|timeuntil }}.<br/>
+      Select one of the plans below to continue using our service.
+    </p>
+  {% else %}
+    <p>You currently don't have an active subscription.<br/>
+      Select one of the plans below to continue using our service.
+    </p>
+  {% endif %}
+  <div class="pricing">
+    <h2 class="pt-3 pb-3">Plans</h2>
+    {% include "shared/plans.html" %}
+  </div>
+{% endblock %}
