@@ -2,31 +2,34 @@
 {% load static %}
 
 {% block main %}
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-main">
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-main bg-gradient">
     <div class="container">
       <a class="navbar-brand" href="{% url "home" %}">
         <img height="24px" src="{% static "images/logo_white.png" %}"/>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 px-5">
-          <li class="nav-item">
+        <ul class="navbar-nav me-auto lg-mb-2 mb-lg-0 px-lg-5">
+          <li class="nav-item pt-lg-2">
             <a class="nav-link" href="{% url "home" %}#pricing">Pricing</a>
           </li>
         </ul>
         <ul class="navbar-nav">
           {% if request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="btn btn-dark" href="{% url "users:dashboard" %}">Dashboard</a>
+              <a class="nav-link d-block d-lg-none" href="{% url "users:dashboard" %}">Dashboard</a>
+              <a class="btn btn-dark d-none d-lg-block" href="{% url "users:dashboard" %}">Dashboard</a>
             </li>
           {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{% url "account_login" %}">Login &nbsp;</a>
             </li>
             <li class="nav-item">
-              <a class="btn btn-success" href="{% url "account_signup" %}">Sign Up</a>
+              <a class="nav-link d-block d-lg-none" href="{% url "account_signup" %}">Sign Up</a>
+              <a class="btn btn-success d-none d-lg-block" href="{% url "account_signup" %}">Sign Up</a>
             </li>
           {% endif %}
         </ul>
@@ -37,10 +40,10 @@
   <footer>
     <div class="container">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6">
           <img height="28px" src="{% static "images/logo_white.png" %}"/>
         </div>
-        <div class="col-md-6 pt-2">
+        <div class="col-sm-6">
           <a href="{% url "support" %}" class="text-white text-decoration-none float-end">Support</a>
         </div>
         <div class="mt-4 mx-3">

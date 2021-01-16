@@ -7,7 +7,9 @@
 {% block main %}
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <main class="mt-auto mb-auto px-3">
-      <img class="mb-5" height="24px" src="{% static "images/logo_white.png" %}">
+      <a href="{% url "home" %}">
+        <img class="mb-5" height="24px" src="{% static "images/logo_white.png" %}">
+      </a>
       {% block login %}{% endblock %}
     </main>
   </div>
