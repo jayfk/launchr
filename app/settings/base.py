@@ -45,7 +45,7 @@ MIDDLEWARE = [
 # SECURITY
 ########################################
 SECRET_KEY = os.environ.get("SECRET_KEY")
-DEBUG = bool(os.environ.get("DJANGO_DEBUG", False))
+DEBUG = bool(os.getenv("DJANGO_DEBUG", "False").lower() in ["true", "1"])
 ALLOWED_HOSTS = []
 
 ########################################
