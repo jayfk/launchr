@@ -2,4 +2,4 @@
 
 To confirm your email for your account, click on the link below:
 
-{% if request.is_secure %}https{% else %}http{% endif %}://{{ current_site.domain }}/auth/confirm-email/{{ key }}/
+{{ base_url }}/auth/confirm-email/{{ key }}/

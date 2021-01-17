@@ -143,6 +143,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_FORMS = {'signup': 'users.forms.CustomSignupForm'}
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
 LOGIN_REDIRECT_URL = reverse_lazy("users:dashboard")
 LOGIN_URL = reverse_lazy("account_login")
 
