@@ -7,6 +7,7 @@ from .views import (
     BillingView,
     CheckoutView,
     SubscriptionView,
+EmailChangeView,
 )
 
 urlpatterns = [
@@ -24,6 +25,11 @@ urlpatterns = [
         route='account/change-password/',
         view=PasswordChangeView.as_view(),
         name="change-password"
+    ),
+    path(
+        route='account/change-email/',
+        view=EmailChangeView.as_view(),
+        name="change-email"
     ),
     path(
         route='subscription/',

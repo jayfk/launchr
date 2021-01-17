@@ -17,10 +17,40 @@
       Contact support if you encounter problems.
     </p>
   {% else %}
-    <form method="post" action="{% url 'account_email' %}" class="add_email">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+    {{ form.as_p }}
+    <form method="post" action="{% url 'users:change-email' %}" class="add_email">
+      <div class="col-md-6 offset-md-3 col-sm-12">
+        {% if form.non_field_errors %}
+          <div class="pb-4">
+            <div class="text-danger" role="alert">
+              {% for error in form.non_field_errors %}
+                <div class="">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        {% csrf_token %}
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+
+        {# Email #}
+        <div class="pb-1 pt-2">
+          <input name='email' type="email" class="form-control form-control-lg {% if form.email.errors %}is-invalid{% endif %}" placeholder="Email"
+                 value="{% if form.email.value %}{{ form.email.value }}{% endif %}"
+                 id="{{ form.email.id_for_label }}">
+          {% if form.email.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.email.errors %}
+                {{ error|escape }}<br/>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="pt-3 d-grid gap-2">
+          <button class="btn btn-dark btn-lg" type="submit">Change Email</button>
+        </div>
     </form>
   {% endif %}
 

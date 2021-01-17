@@ -1,7 +1,14 @@
 import json
 
 import stripe
-from allauth.account.views import PasswordChangeView as AllauthPasswordChangeView
+from allauth.account.views import (
+    PasswordChangeView as AllauthPasswordChangeView,
+    EmailView as AllauthEmailView,
+)
+from allauth.account.adapter import get_adapter
+from allauth.account import signals
+from allauth.account.models import EmailAddress
+from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -30,6 +37,7 @@ class AccountView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         data = super(AccountView, self).get_context_data(**kwargs)
         data['password_changed'] = bool(self.request.GET.get("password_changed", False))
+        data['email_changed'] = bool(self.request.GET.get("email_changed", False))
         return data
 
 
@@ -37,6 +45,48 @@ class PasswordChangeView(AllauthPasswordChangeView):
 
     def get_success_url(self):
         return reverse("users:account") + "?password_changed=True"
+
+
+class EmailChangeView(AllauthEmailView):
+
+    def form_valid(self, form):
+        # copying allauths form validation to be
+        # as close to the original as possible.
+        # we could remove the signals since we are not using them,
+        # but I left them in if we need them at some point
+        email_address = form.save(self.request)
+        get_adapter(self.request).add_message(
+            self.request,
+            messages.INFO,
+            "account/messages/" "email_confirmation_sent.txt",
+            {"email": form.cleaned_data["email"]},
+        )
+        signals.email_added.send(
+            sender=self.request.user.__class__,
+            request=self.request,
+            user=self.request.user,
+            email_address=email_address,
+        )
+        # make the email address primary
+        email_address.set_as_primary()
+        # get all old email addresses for this user and delete them
+        EmailAddress.objects.filter(
+            user=self.request.user
+        ).exclude(
+            pk=email_address.pk
+        ).delete()
+        return super(EmailChangeView, self).form_valid(form)
+
+    def get_success_url(self):
+        # on a successfull email change, we are going to redirect
+        # the user to the main account page
+        return reverse("users:account") + "?email_changed=True"
+
+    def post(self, request, *args, **kwargs):
+        # overriding the default post method to disable all
+        # the add/remove/send/primary actions here.
+        # we are going to handle them in form_valid
+        return super(AllauthEmailView, self).post(request, *args, **kwargs)
 
 
 class SubscriptionView(LoginRequiredMixin, TemplateView):

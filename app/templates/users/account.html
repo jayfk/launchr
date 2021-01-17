@@ -74,8 +74,13 @@
       <div class="input-group mb-3">
         <label class="col-sm-3 col-form-label">Email</label>
         <input type="text" disabled class="form-control" value="{{ user.email }}">
-        <a class="btn btn-dark" type="button" href="{% url "account_email" %}">Edit</a>
+        <a class="btn btn-dark" type="button" href="{% url "users:change-email" %}">Change</a>
       </div>
+      {% if email_changed %}
+        <div class="alert alert-success">
+          The email has been changed
+        </div>
+      {% endif %}
       <div class="input-group mb-3">
         <label class="col-sm-3 col-form-label">Password</label>
         <input type="password" disabled class="form-control" value="redacted-redacted">
