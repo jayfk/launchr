@@ -7,9 +7,14 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from djstripe.exceptions import MultipleSubscriptionException
 from djstripe.models import Customer, Plan
 from djstripe.models import Subscription
+
+from users.email import subscribe_to_mailing_list, unsubscribe_from_mailing_list
 
 logger = getLogger(__name__)
 
@@ -100,3 +105,42 @@ class User(AbstractUser):
                 f"See: https://getlaunchr.com/docs/subscriptions/#get_stripe_plan_id_by_key"
             )
         return stripe_id
+
+    def save(self, *args, **kwargs):
+        """
+        This method overrides the default users save method to
+        subscribe/unsubscribe the user from the mailing list
+        """
+        # check if this is a new user
+        if self.pk is not None:
+            # get the old record for this user, prior to the save
+            old = User.objects.get(pk=self.pk)
+            # if the user was subscribed to the newsletter but
+            # is no longer interested in it (or vice versa),
+            # change it
+            if self.newsletter != old.newsletter:
+                if self.newsletter:
+                    subscribe_to_mailing_list(
+                        email=self.email,
+                        first=self.first_name,
+                        last=self.last_name
+                    )
+                else:
+                    unsubscribe_from_mailing_list(
+                        email=self.email
+                    )
+        return super(User, self).save(*args, **kwargs)
+
+
+@receiver(post_save, sender=User)
+def create_user(sender, created, instance: User, **kwargs):
+    """
+    Signal that gets triggered once a new user object is created.
+    It is used to subscribe users to the mailing list.
+    """
+    if created and instance.newsletter:
+        subscribe_to_mailing_list(
+            email=instance.email,
+            first=instance.first_name,
+            last=instance.last_name
+        )

@@ -18,7 +18,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView, UpdateView
 from djstripe.models import Customer
 from users.forms import AccountForm
-
+from users.email import subscribe_to_mailing_list, unsubscribe_from_mailing_list
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "users/dashboard.html"
@@ -69,12 +69,24 @@ class EmailChangeView(AllauthEmailView):
         )
         # make the email address primary
         email_address.set_as_primary()
+        # subscribe the user to the mailing list, if it is enabled
+        if self.request.user.newsletter:
+            subscribe_to_mailing_list(
+                email=email_address.email,
+                first=self.request.user.first_name,
+                last=self.request.user.last_name
+            )
         # get all old email addresses for this user and delete them
-        EmailAddress.objects.filter(
+        # from the database and from the mailing list
+        for email in EmailAddress.objects.filter(
             user=self.request.user
         ).exclude(
             pk=email_address.pk
-        ).delete()
+        ):
+            unsubscribe_from_mailing_list(
+                email=email.email
+            )
+            email.delete()
         return super(EmailChangeView, self).form_valid(form)
 
     def get_success_url(self):
