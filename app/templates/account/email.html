@@ -17,7 +17,6 @@
       Contact support if you encounter problems.
     </p>
   {% else %}
-    {{ form.as_p }}
     <form method="post" action="{% url 'users:change-email' %}" class="add_email">
       <div class="col-md-6 offset-md-3 col-sm-12">
         {% if form.non_field_errors %}
