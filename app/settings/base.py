@@ -163,17 +163,37 @@ DJSTRIPE_USE_NATIVE_JSONFIELD = True
 DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
 # todo: set your trial length here
 TRIAL_DAYS = 14
-# todo: update your plans according to your needs
+# todo: update your plans here
+# To configure payments, take a look at: https://getlaunchr.com/docs/payments/
 PLANS = {
+    # this is the plans unique key. if you change the key here,
+    # you also need to change the key in your environment settings (settings/dev.py &
+    # settings/prod.py) to correctly attach the plan on stripe.
     "starter": {
+        # the name, as it is displayed to end users
         "name": "Starter",
+        # the stripe_id attached to this plan
+        # note: when configuring plans, leave the stripe_id set
+        # to None here and set it in the settings file for your
+        # current environment (app/settings/dev.py & app/settings/prod.py).
+        # This makes sure that the correct stripe id is used for the environment.
         "stripe_id": None,
+        # plans that are set to be available are shown to end users
+        # on the pricing and subscription page.
         "available": True,
+        # the recurring price for this plan
         "price": "4.99",
+        # the features this plan has are listed here.
         "features": [
             {
+                # if the feature is enabled, a green checkmark
+                # is displayed
                 "enabled": True,
+                # the text as it is displayed for end users
                 "text": "Feature 1",
+                # the unique key this feature has. For a user which is
+                # subscribed to a plan, we can call the user.can_use_feature('feature_1')
+                # function to determine if the user can use this feature.
                 "key": "feature_1"
             },
             {

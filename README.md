@@ -63,7 +63,7 @@ visiting [http://localhost:8000/](http://localhost:8000/).
 
 ### Where to go from here?
 
-I'm currently still writing the Documentation. If you get stuck at any point, open up an issue on GitHub.
+One of the first things you want to do is to set up [payments via Stripe](https://getlaunchr.com/docs/payments/).
 
 ## Documentation
 

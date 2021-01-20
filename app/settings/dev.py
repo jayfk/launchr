@@ -19,8 +19,10 @@ STRIPE_TEST_SECRET_KEY = STRIPE_SECRET_KEY
 STRIPE_TEST_PUBLIC_KEY = STRIPE_PUBLIC_KEY
 STRIPE_LIVE_MODE = False
 DJSTRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
-# todo: use the stripe dashboard to create the plans for this project,
-# todo: then fill them in here
+# todo: update your plans here
+# use the stripe dashboard to create plans for this project,
+# then fill them in here attach them to your app
+# To configure payments, take a look at: https://getlaunchr.com/docs/payments/
 PLANS["starter"]['stripe_id'] = ''
 PLANS["basic"]['stripe_id'] = ''
 PLANS["pro"]['stripe_id'] = ''
