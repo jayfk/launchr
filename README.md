@@ -21,10 +21,15 @@
     Launchr is an open source SaaS starter kit.<br> 
 </p>
 
+## About
+
+Launchr is a fully-equipped starter template, ready to start a SaaS web app. It implements the whole payment flow +
+subscription management and comes with user authentication & registration and a ton of
+other [features](https://getlaunchr.com/).
+
 ## Getting Started <a name = "getting_started"></a>
 
-Launchr is at an early stage. It's fully functional, but missing documentation. If you want to try it out, follow the
-examples below.
+If you want to try out Launchr, follow the examples below.
 
 ### Prerequisites
 
