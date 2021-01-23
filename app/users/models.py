@@ -5,14 +5,14 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.utils import timezone
-from django.utils.functional import cached_property
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.utils import timezone
+from django.utils.functional import cached_property
 from djstripe.exceptions import MultipleSubscriptionException
 from djstripe.models import Customer, Plan
 from djstripe.models import Subscription
+from stripe.error import AuthenticationError
 
 from users.email import subscribe_to_mailing_list, unsubscribe_from_mailing_list
 
@@ -24,10 +24,28 @@ class User(AbstractUser):
         default=True
     )
 
+    @property
+    def bypassing_stripe(self):
+        """Checks if BYPASS_STRIPE is set to True in settings"""
+        return settings.BYPASS_STRIPE
+
     @cached_property
     def customer(self):
-        customer, _ = Customer.get_or_create(self)
-        return customer
+        try:
+            customer, _ = Customer.get_or_create(self)
+            return customer
+        except AuthenticationError as e:
+            # if we are bypassing stripe, we swallow the exception and
+            # emit a warning instead. This allows us to develop the app
+            # without caring about setting up stripe for every development
+            # environment
+            if settings.BYPASS_STRIPE:
+                logger.warning(
+                    "Warning: You are using an invalid Stripe API key. Since BYPASS_STRIPE is set to True, this "
+                    "error is ignored. To test your Stripe integration, make sure to set BYPASS_STRIPE to False."
+                )
+                return None
+            raise e
 
     @cached_property
     def has_active_subscription(self):
@@ -36,6 +54,14 @@ class User(AbstractUser):
             return self.customer.subscription is not None
         except MultipleSubscriptionException:
             return True
+        except AttributeError as e:
+            # if BYPASS_STRIPE is set to True, our customer object has no
+            # subscription (it is None). Setting BYPASS_STRIPE to True
+            # allows us to test the app, without setting up Stripe for
+            # every development environment
+            if settings.BYPASS_STRIPE:
+                return True
+            raise e
 
     @cached_property
     def invoices(self):
@@ -51,6 +77,16 @@ class User(AbstractUser):
 
     @cached_property
     def plan(self):
+        # if BYPASS_STRIPE is set to True, we simply return the trial
+        # plan. This allows us to test the app without setting up
+        # stripe for every development environment
+        if settings.BYPASS_STRIPE:
+            logger.warning(
+                "Warning: Bypassing Stripe integration since BYPASS_STRIPE is set to True. \n"
+                "To test your Stripe integration, make sure to set up BYPASS_STRIPE to False.\n"
+                "Learn more at: https://getlaunchr.com/docs/payments/"
+            )
+            return settings.PLANS[settings.TRIAL_PLAN_KEY]
         if self.stripe_plan:
             return self.get_plan_by_stripe_id(
                 self.stripe_plan.id

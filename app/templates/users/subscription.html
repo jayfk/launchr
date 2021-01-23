@@ -3,6 +3,22 @@
 {% block title %}Subscription{% endblock %}
 
 {% block content %}
+  {% if user.bypassing_stripe %}
+    <div class="alert alert-warning mt-3">
+      <p><strong>WARNING</strong></p>
+      <p>
+        You have set <strong>BYPASS_STRIPE</strong> to <strong>True</strong> in your settings file.</p>
+
+      <p>This allows you to test your app without setting up Stripe for every development environment but
+        also disables the Stripe integration. With <strong>BYPASS_STRIPE</strong> enabled, you won't be
+        able to manage your subscription, or select one of the plans below.
+      </p>
+      <p>
+        To set up stripe, please follow the docs at: <a target="_blank" href="https://getlaunchr.com/docs/payments/">
+        https://getlaunchr.com/docs/payments/</a>
+      </p>
+    </div>
+  {% endif %}
   <h2 class="pt-3 pb-3">Subscription</h2>
   {% if user.has_active_subscription %}
     <form method="post" action="{% url "users:billing" %}">

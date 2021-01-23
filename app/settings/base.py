@@ -270,3 +270,7 @@ PLANS = {
         ]
     }
 }
+# Bypassing Stripe allows us to test the app without setting
+# up Stripe for every development environment. Don't use this
+# in production.
+BYPASS_STRIPE = False

@@ -27,6 +27,10 @@ PLANS["starter"]['stripe_id'] = ''
 PLANS["basic"]['stripe_id'] = ''
 PLANS["pro"]['stripe_id'] = ''
 TRIAL_PLAN_KEY = 'pro'
+# Bypassing Stripe allows us to test the app without setting
+# up Stripe for every development environment. Don't use this
+# in production.
+BYPASS_STRIPE = True
 
 ########################################
 # CAPTCHA
